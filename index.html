@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carte Mapbox avec GPX, Texte, et Choix de Style</title>
+    <!-- Inclure les fichiers CSS et JS de Mapbox -->
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <!-- Bibliothèque pour convertir GPX en GeoJSON -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.min.js"></script>
+    <!-- Interact.js pour rendre les zones de texte déplaçables -->
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <!-- HTML2Canvas pour capturer l'image de la carte -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <!-- jsPDF pour générer un PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <!-- Utilisation de la police téléchargée -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      /* Carte en format réduit à 60% tout en conservant le ratio A4 */
+      #map {
+        width: 475px;
+        height: 620px;
+        border: 1px solid black;
+        margin: 0 auto;
+      }
+      #controls-container {
+        padding: 10px;
+        text-align: center;
+      }
+      #style-select,
+      #color-picker,
+      #file-input,
+      #upload-button,
+      #add-text-button {
+        margin: 5px;
+      }
+      #text-controls {
+        text-align: center;
+        margin-top: 10px;
+      }
+      #text-container {
+        position: relative;
+        margin: 0 auto;
+        width: 475px; /* Correspond à la largeur de la carte */
+      }
+      .text-box {
+        position: absolute;
+        font-family: Arial;
+        font-size: 24px;
+        background: transparent;
+        color: #000000;
+        padding: 5px;
+        cursor: move;
+        resize: both;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Conteneur de la carte -->
+    <div id="map"></div>
+
+    <!-- Conteneur pour les options de chargement GPX, couleur et styles -->
+    <div id="controls-container">
+      <!-- Liste déroulante pour le choix du style de carte -->
+      <label for="style-select">Choisissez le style de fond :</label>
+      <select id="style-select">
+        <option value="mapbox://styles/runtrack/cm0r2wr2b00mx01pm2jcp75lj">
+          Noir & Blanc
+        </option>
+        <option value="mapbox://styles/runtrack/cm0r34n8500mb01qo7oqffo1s">
+          Noir
+        </option>
+        <option value="mapbox://styles/runtrack/cm0r3jwsm00ly01qubwjp0dz8">
+          Vert
+        </option>
+        <option value="mapbox://styles/runtrack/cm0r3p03r00oo01qkf4fuaie1">
+          Bleu
+        </option>
+        <option value="mapbox://styles/runtrack/cm0rhuqri00m901qu42bjh8sn">
+          Paris 2024
+        </option>
+        <option value="mapbox://styles/runtrack/cm0rir77b00oi01o39qt4haas">
+          Octobre Rose
+        </option>
+      </select>
+
+      <!-- Sélection de la couleur du tracé GPX -->
+      <label for="color-picker">Couleur du tracé :</label>
+      <input type="color" id="color-picker" value="#FF0000" />
+
+      <!-- Upload du fichier GPX -->
+      <input type="file" id="file-input" accept=".gpx" />
+      <button id="upload-button">Charger le fichier GPX</button>
+
+      <!-- Bouton pour ajouter des zones de texte -->
+      <button id="add-text-button">Ajouter une zone de texte</button>
+    </div>
+
+    <!-- Conteneur pour les zones de texte -->
+    <div id="text-container"></div>
+
+    <!-- Contrôles de personnalisation du texte (indépendants pour chaque zone) -->
+    <div id="text-controls">
+      <label for="font-select">Police :</label>
+      <select id="font-select">
+        <option value="Arial">Arial</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Courier New">Courier New</option>
+      </select>
+
+      <label for="font-size">Taille :</label>
+      <input type="number" id="font-size" value="24" min="10" max="72" />
+
+      <label for="font-color">Couleur :</label>
+      <input type="color" id="font-color" value="#000000" />
+
+      <label for="text-align">Alignement :</label>
+      <select id="text-align">
+        <option value="left">Gauche</option>
+        <option value="center">Centre</option>
+        <option value="right">Droite</option>
+      </select>
+    </div>
+
+    <!-- Boutons pour télécharger l'image ou générer un PDF -->
+    <div id="save-controls" style="text-align: center; margin-top: 10px">
+      <button id="download-png-button">Télécharger en PNG</button>
+      <button id="download-pdf-button">Télécharger en PDF</button>
+    </div>
+
+    <!-- Inclure le fichier JavaScript -->
+    <script src="index.js"></script>
+  </body>
+</html>
